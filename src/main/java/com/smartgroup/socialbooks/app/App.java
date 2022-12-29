@@ -1,28 +1,37 @@
 package com.smartgroup.socialbooks.app;
 
-import java.net.URI;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import com.smartgroup.socialbooks.client.BookClient;
+import com.smartgroup.socialbooks.client.domain.Book;
 
 public class App {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParseException {
 		
-		RestTemplate restTemplate = new RestTemplate();
+		BookClient client = new BookClient();
 		
-		RequestEntity<Void> request = RequestEntity
-				.get(URI.create("http://localhost:8080/books"))
-				.header("Authorization", "Basic cm9tdWxvYWJiaWF0aTpzM25oNA==")
-				.build();
+		List<Book> booksList = client.findAll();
 		
-		ResponseEntity<Book[]> response = restTemplate.exchange(request, Book[].class);
-		
-		for(Book book : response.getBody()) {
-			System.out.println("Book " + book.getName());
+		for(Book book : booksList) {
+			System.out.println("Book: " + book.getName());
 		}
 		
+		
+		Book book = new Book();
+		book.setName("REST Hands On");
+		book.setPublisher("MAKRON Books");
+		
+		SimpleDateFormat releaseDate = new SimpleDateFormat("dd/MM/yyyy");
+		book.setRelease(releaseDate.parse("01/01/2023"));
+		
+		book.setSummary("This book will teach you how to create REST APIs");
+		
+		String location = client.save(book);
+		
+		System.out.println("Book URI: " + location);
 	}
 	
 }
