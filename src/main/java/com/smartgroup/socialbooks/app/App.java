@@ -11,7 +11,8 @@ public class App {
 
 	public static void main(String[] args) throws ParseException {
 		
-		BookClient client = new BookClient();
+		BookClient client = new BookClient(
+				"http://localhost:8080", "romuloabbiati", "s3nh4");
 		
 		List<Book> booksList = client.findAll();
 		
